@@ -1,13 +1,9 @@
 import { NextPageContext } from 'next';
 import { getSession } from 'next-auth/react';
-import Login from '../component/login';
+import SignUp from '../component/signup';
 
-const HomePage = () => {
-  return (
-    <>
-      <Login />
-    </>
-  );
+const SignupPage = () => {
+  return <SignUp />;
 };
 
 export const getServerSideProps = async (context: NextPageContext) => {
@@ -27,4 +23,4 @@ export const getServerSideProps = async (context: NextPageContext) => {
   };
 };
 
-export default HomePage;
+export default SignupPage;
