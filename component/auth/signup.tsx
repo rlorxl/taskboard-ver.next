@@ -1,9 +1,11 @@
 import React, { useRef, useState } from 'react';
 import { useRouter } from 'next/router';
 
+import styled from 'styled-components';
 import { BsArrowRightShort } from 'react-icons/bs';
-import classes from './signup.module.css';
-import { createUser } from '../lib/signup';
+import { createUser } from '../../lib/signup';
+import { Button } from '../../styles/theme';
+import Input from '../ui/input';
 
 const SignUp = () => {
   const [emailIsValid, setEmailIsValid] = useState<boolean>(false);
@@ -62,29 +64,59 @@ const SignUp = () => {
   };
 
   return (
-    <div className={classes.signupWrap}>
+    <Container>
       <h1>Signup</h1>
       <form onSubmit={submitHandler}>
-        <input
+        <Input
           type='email'
           placeholder='이메일 입력'
           ref={emailInputRef}
           onChange={emailValidateHandler}
         />
-        <input
+        <Input
           type='password'
           placeholder='패스워드 입력'
           ref={passwordInputRef}
           onChange={passwordValidateHandler}
         />
-        {<p className={classes.errorMessage}>{errorMessage}</p>}
-        <button className={classes.signupBtn}>
+        {<ErrorMessage>{errorMessage}</ErrorMessage>}
+        <SignupBtn>
           Create account
           <BsArrowRightShort />
-        </button>
+        </SignupBtn>
       </form>
-    </div>
+    </Container>
   );
 };
+
+const Container = styled.div`
+  width: 450px;
+  height: 250px;
+  margin: 0 auto;
+  position: fixed;
+  top: 35%;
+  left: 50%;
+  transform: translatex(-50%);
+  text-align: center;
+`;
+
+const SignupBtn = styled(Button)`
+  font-size: 1.1em;
+  font-weight: bold;
+  margin-top: 25px;
+  color: #fff;
+  &:hover {
+    color: ${({ theme }) => theme.color.carrot};
+  }
+  svg {
+    font-size: 1.7em;
+  }
+`;
+
+const ErrorMessage = styled.p`
+  font-size: 0.8em;
+  color: ${({ theme }) => theme.color.carrot};
+  padding-left: 8px;
+`;
 
 export default SignUp;

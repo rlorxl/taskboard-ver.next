@@ -1,6 +1,6 @@
 import { NextPageContext } from 'next';
 import { getSession } from 'next-auth/react';
-import SignUp from '../component/signup';
+import SignUp from '../component/auth/signup';
 
 const SignupPage = () => {
   return <SignUp />;
