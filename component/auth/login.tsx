@@ -4,7 +4,9 @@ import { useRouter } from 'next/router';
 import { signIn } from 'next-auth/react';
 
 import { BsArrowRightShort } from 'react-icons/bs';
-import classes from './login.module.css';
+import styled from 'styled-components';
+import Input from '../ui/input';
+import { Button } from '../../styles/theme';
 
 const Login = () => {
   const [isAllTouched, setIsAllTouched] = useState<boolean>(false);
@@ -47,32 +49,86 @@ const Login = () => {
   };
 
   return (
-    <div className={classes.signinWrap}>
+    <Container>
       <h1>Planit</h1>
-      <div className={classes.linkWrap}>
-        <Link href='/signup' className={classes.signupLink}>
+      <LinkWrapper>
+        <SignupLink href='/signup'>
           <span>Signup</span>
           <BsArrowRightShort />
-        </Link>
-      </div>
+        </SignupLink>
+      </LinkWrapper>
       <form onSubmit={loginHandler}>
-        <input
+        <Input
           type='text'
           placeholder='이메일'
           autoFocus
           ref={emailInputRef}
           onChange={touchedHandler}
         />
-        <input
+        <Input
           type='password'
           placeholder='패스워드'
           ref={passwordInputRef}
           onChange={touchedHandler}
         />
-        {isAllTouched && <button>Press Enter</button>}
+        {isAllTouched && <LoginBtn>Press Enter</LoginBtn>}
       </form>
-    </div>
+    </Container>
   );
 };
+
+const Container = styled.div`
+  width: 450px;
+  height: 250px;
+  margin: 0 auto;
+  position: fixed;
+  top: 35%;
+  left: 50%;
+  transform: translatex(-50%);
+  text-align: center;
+  p {
+    color: ${({ theme }) => theme.color.carrot};
+    font-size: 0.8em;
+  }
+`;
+
+const LoginBtn = styled(Button)`
+  color: ${({ theme }) => theme.color.carrot};
+  font-size: 1.3em;
+  margin-top: 40px;
+  animation: fadeIn 0.7s ease;
+  @keyframes fadeIn {
+    0% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 100;
+    }
+  }
+`;
+
+const LinkWrapper = styled.div`
+  width: 100%;
+  height: 27px;
+  position: relative;
+`;
+
+const SignupLink = styled(Link)`
+  display: flex;
+  justify-content: end;
+  align-items: center;
+  color: #fff;
+  text-align: end;
+  padding-right: 8px;
+  width: 80px;
+  position: absolute;
+  right: 0;
+  &:hover {
+    text-decoration: underline;
+  }
+  svg {
+    font-size: 1.6em;
+  }
+`;
 
 export default Login;

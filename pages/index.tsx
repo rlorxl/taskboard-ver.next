@@ -1,6 +1,6 @@
 import { NextPageContext } from 'next';
 import { getSession } from 'next-auth/react';
-import Login from '../component/login';
+import Login from '../component/auth/login';
 
 const HomePage = () => {
   return (
