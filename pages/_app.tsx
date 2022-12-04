@@ -19,8 +19,6 @@ export default function App({ Component, pageProps }: AppProps) {
             <Header />
             <Component {...pageProps} />
           </Provider>
-          <Header />
-          <Component {...pageProps} />
         </ThemeProvider>
       </SessionProvider>
     </>

@@ -69,6 +69,9 @@ const Calendar = () => {
           <Day key={i} date={i + 1} year={year} month={month} />
         ))}
       </Flexbox>
+    </Container>
+  );
+};
 
 const Container = styled.section`
   margin: 0 auto;

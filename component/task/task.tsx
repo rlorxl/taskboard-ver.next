@@ -1,14 +1,26 @@
+import { useState } from 'react';
 import styled from 'styled-components';
+import TaskModal from '../modal/task-modal';
 import CreateButton from '../ui/create-button';
 
 const Task = () => {
+  const [showModal, setShowModal] = useState<boolean>(false);
+
+  const show = () => {
+    setShowModal(true);
+  };
+
+  const close = () => {
+    setShowModal(false);
+  };
+
   return (
     <>
-      {/* {showModal && <TaskModal onClose={close} />} */}
+      {showModal && <TaskModal onClose={close} />}
       <TaskArea>
         <div>
           <Date>{/* {year}/{month + 1}/{date.slice(6)} */}</Date>
-          <CreateButton />
+          <CreateButton onShow={show} />
         </div>
         <ul></ul>
       </TaskArea>
