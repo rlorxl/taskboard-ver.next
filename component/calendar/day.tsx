@@ -7,16 +7,16 @@ import {
   formattedMonth,
 } from '../../store/modules/date-slice';
 
-type DateProps = {
+interface DateProps {
   date: number;
   year: number;
   month: number;
-};
+}
 
-type ElementProps = {
+interface ElementProps {
   today: boolean;
   isActive: boolean;
-};
+}
 
 const Day: React.FC<DateProps> = (props) => {
   const { date, year, month } = props;

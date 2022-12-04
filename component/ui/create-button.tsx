@@ -2,9 +2,17 @@ import { BiPlus } from 'react-icons/bi';
 import styled from 'styled-components';
 import { Button } from '../../styles/theme';
 
-const CreateButton = () => {
+interface ModalProps {
+  onShow: () => void;
+}
+
+const CreateButton: React.FC<ModalProps> = (props) => {
+  const showModalHandler = () => {
+    props.onShow();
+  };
+
   return (
-    <BtnArea>
+    <BtnArea onClick={showModalHandler}>
       <CreateNew>
         <span>Create New</span>
         <span>
