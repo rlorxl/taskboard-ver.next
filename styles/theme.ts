@@ -1,6 +1,15 @@
 import styled from 'styled-components';
 
-const color = {
+interface ColorTheme {
+  carrot: string;
+  carrot50: string;
+  carrot25: string;
+  black: string;
+  gray: string;
+  error: string;
+}
+
+const color: ColorTheme = {
   carrot: '#f55f2f',
   carrot50: '#ffa78b',
   carrot25: '#FFDED3',

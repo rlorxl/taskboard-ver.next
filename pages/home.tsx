@@ -6,7 +6,7 @@ import Task from '../component/task/task';
 const HomePage = () => {
   return (
     <Card>
-      <Intro />
+      {/* <Intro /> */}
       <Calendar />
       <Task />
     </Card>
