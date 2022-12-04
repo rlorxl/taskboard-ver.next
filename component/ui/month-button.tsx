@@ -3,13 +3,26 @@ import { BiChevronLeft, BiChevronRight } from 'react-icons/bi';
 import styled from 'styled-components';
 import { Button } from '../../styles/theme';
 
-const MonthButton = () => {
+type MonthProps = {
+  onIncrease: () => void;
+  onDecrease: () => void;
+};
+
+const MonthButton: React.FC<MonthProps> = (props) => {
+  const decreaseMonthHandler = () => {
+    props.onDecrease();
+  };
+
+  const increaseMonthHandler = () => {
+    props.onIncrease();
+  };
+
   return (
     <BtnArea>
-      <Arrow>
+      <Arrow onClick={decreaseMonthHandler}>
         <BiChevronLeft />
       </Arrow>
-      <Arrow>
+      <Arrow onClick={increaseMonthHandler}>
         <BiChevronRight />
       </Arrow>
     </BtnArea>
