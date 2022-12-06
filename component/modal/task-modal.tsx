@@ -9,37 +9,70 @@ import CreateMemo from './create-memo';
 import { useAppDispatch, useAppSelector } from '../../store/configStore.hooks';
 import { taskActions } from '../../store/modules/task-slice';
 import { BiErrorCircle } from 'react-icons/bi';
-
-const createRandomId = () => {
-  return Math.random().toString(36).substring(2, 12);
-};
+import { useSession } from 'next-auth/react';
 
 interface ModalProps {
   onClose: () => void;
 }
 
-interface Memo {
+interface MemoState {
   id: string;
   content: string;
 }
 
+interface RequestBody {
+  user: string;
+  memo: {
+    id: string;
+    content: string;
+    category: string;
+    completed: boolean;
+    date: string;
+  }[];
+  date: string;
+}
+
+const createRandomId = () => {
+  return Math.random().toString(36).substring(2, 12);
+};
+
+const taskUpload = async (reqBody: RequestBody) => {
+  const response = await fetch('/api/database/user', {
+    method: 'POST',
+    body: JSON.stringify(reqBody),
+    headers: { 'Content-Type': 'application/json' },
+  });
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data.message || 'Something went wrong!');
+  }
+};
+
 const TaskModal: React.FC<ModalProps> = (props) => {
-  const [memos, setMemos] = useState<Memo[]>([
-    { id: createRandomId(), content: '' },
-  ]);
-  const [error, setError] = useState<boolean>(false);
-  const [errorMessage, setErrorMessage] = useState<string>('');
+  const { data: session } = useSession();
 
   const dispatch = useAppDispatch();
 
   const { selectedCategory } = useAppSelector((state) => state.task);
+  const { date } = useAppSelector((state) => state.date);
+
+  const [memos, setMemos] = useState<MemoState[]>([
+    {
+      id: createRandomId(),
+      content: '',
+    },
+  ]);
+  const [error, setError] = useState<boolean>(false);
+  const [errorMessage, setErrorMessage] = useState<string>('');
 
   const closeModal = () => {
     dispatch(taskActions.clear());
     props.onClose();
   };
 
-  const createTask = () => {
+  const createTask = async () => {
     let isContentExisted = memos.find((memo) => memo.content !== '');
 
     if (selectedCategory === '') {
@@ -52,8 +85,22 @@ const TaskModal: React.FC<ModalProps> = (props) => {
       return;
     }
 
-    const filteredMemos = memos.filter((memo) => memo.content !== '');
-    console.log(filteredMemos);
+    const filteredMemos = memos
+      .filter((memo) => memo.content !== '')
+      .map((memo) => ({
+        ...memo,
+        category: selectedCategory,
+        completed: false,
+        date: date,
+      }));
+
+    // console.log(filteredMemos);
+
+    if (typeof session?.user?.email === 'string') {
+      const currentUser: string = session?.user?.email;
+      await taskUpload({ user: currentUser, memo: filteredMemos, date });
+    }
+
     // http request (POST)
     // closeModal();
   };

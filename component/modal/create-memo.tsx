@@ -1,6 +1,7 @@
 import React from 'react';
 import { BiPlus } from 'react-icons/bi';
 import styled from 'styled-components';
+import { useAppSelector } from '../../store/configStore.hooks';
 import { Button } from '../../styles/theme';
 import MemoItem from './memo-item';
 
@@ -24,7 +25,10 @@ const CreateMemo: React.FC<CreateMemoProps> = (props) => {
   const addMemoListHandler = () => {
     setMemos((prev: Memo[]) => [
       ...prev,
-      { id: createRandomId(), content: '' },
+      {
+        id: createRandomId(),
+        content: '',
+      },
     ]);
   };
 
