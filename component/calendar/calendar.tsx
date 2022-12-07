@@ -4,7 +4,6 @@ import { useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../store/configStore.hooks';
 import { dateActions } from '../../store/modules/date-slice';
 import Day from './day';
-import useFetch from '../../hooks/useFetch';
 
 const monthName: string[] = [
   'January',
@@ -27,23 +26,7 @@ const Calendar = () => {
   const [startDay, setStartDay] = useState<string[]>([]);
 
   const dispatch = useAppDispatch();
-  const {
-    // date: selectedDate,
-    year,
-    month,
-    day,
-  } = useAppSelector((state) => state.date);
-
-  const { data, isError } = useFetch();
-
-  useEffect(() => {
-    // if (data) {
-    // console.log(selectedDate);
-    if (data) {
-      console.log(data);
-    }
-    // }
-  }, [data]);
+  const { year, month, day } = useAppSelector((state) => state.date);
 
   const increaseMonthHandler = () => {
     dispatch(dateActions.increaseMonth());

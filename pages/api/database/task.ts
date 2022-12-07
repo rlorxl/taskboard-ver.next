@@ -12,7 +12,8 @@ interface RequestBody {
     completed: boolean;
   }[];
   date: string;
-  role?: string;
+  _id?: never;
+  completed?: boolean;
 }
 
 interface Request {
@@ -21,77 +22,70 @@ interface Request {
 }
 
 const handler = async (req: Request, res: NextApiResponse) => {
-  const { user: userEmail, memo, date } = req.body;
-
   const client = await connectToDatabase();
   const db = client.db();
 
-  const user = await db.collection('users').findOne({ email: userEmail });
-
   if (req.method === 'POST') {
-    // const data = await db.collection('tasks').findOne({ email: userEmail });
+    const { user: userEmail, memo, date } = req.body;
 
-    // const startTime = new Date('2022-12-01').toISOString();
-    // const endTime = new Date('2022-12-08').toISOString();
-
-    // console.log(startTime, endTime);
-
-    const newTasks = memo.map((item) => ({
+    const tasks = memo?.map((item) => ({
       ...item,
       date: date,
       email: userEmail,
     }));
 
-    console.log(newTasks);
-
     try {
-      await db.collection('tasks').insertMany(newTasks);
-      res.status(201).send({ message: 'Inserted tasks.' });
+      const result = await db.collection('tasks').insertMany(tasks);
+
+      if (result) {
+        res.status(201).json({ message: 'Inserted tasks.' });
+      }
     } catch (error) {
-      res.status(500).json({ message: 'Inserting task failed!' });
+      if (error instanceof TypeError || error instanceof SyntaxError) {
+        console.log(error.message);
+        res.status(500).json({ message: 'Inserting task failed!' });
+      }
     }
   }
 
-  // * ------------------------ first try ------------------------------- * //
-  // if (data) {
-  //   try {
-  //     console.log(userEmail);
+  if (req.method === 'PUT') {
+    const { _id, completed } = req.body;
 
-  //     await db.collection('tasks').updateOne(
-  //       { email: userEmail },
-  //       {
-  //         $push: {
-  //           tasks: {
-  //             $each: newTasks,
-  //           },
-  //         },
-  //       }
-  //     );
-  //   } catch (error) {
-  //     res.status(500).json({ message: 'Inserting task failed!' });
-  //   }
-  // } else {
-  //   try {
-  //     console.log('first');
+    try {
+      const query = { _id: new ObjectId(_id) };
+      const result = await db
+        .collection('tasks')
+        .updateOne(query, { $set: { completed: !completed } });
 
-  //     await db.collection('tasks').updateOne(
-  //       { _id: user?._id },
-  //       {
-  //         $set: {
-  //           _id: user?._id,
-  //           email: userEmail,
-  //           tasks: newTasks,
-  //         },
-  //       },
-  //       { upsert: true }
-  //     );
-  //     res.status(201).send({ message: 'Inserted tasks.' });
-  //   } catch (error) {
-  //     res.status(500).json({ message: 'Inserting task failed!' });
-  //   }
-  // }
+      if (result) {
+        res.status(200).json({ message: 'Successfully updated task.' });
+      }
+    } catch (error) {
+      if (error instanceof TypeError || error instanceof SyntaxError) {
+        console.log(error.message);
+        res.status(304).json({ message: 'Updating task failed!' });
+      }
+    }
+  }
 
-  // client.close();
+  if (req.method === 'DELETE') {
+    const { _id } = req.body;
+
+    try {
+      const query = { _id: new ObjectId(_id) };
+      const result = await db.collection('tasks').deleteOne(query);
+      if (result && result.deletedCount) {
+        res.status(202).json({ message: 'Successfully removed task.' });
+      } else {
+        res.status(404).json({ message: 'Task does not exist.' });
+      }
+    } catch (error) {
+      if (error instanceof TypeError || error instanceof SyntaxError) {
+        console.log(error.message);
+        res.status(304).json({ message: 'Updating task failed!' });
+      }
+    }
+  }
 };
 
 export default handler;

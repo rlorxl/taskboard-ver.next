@@ -6,47 +6,42 @@ import TaskItem from './task-item';
 import { useAppSelector } from '../../store/configStore.hooks';
 import useFetch from '../../hooks/useFetch';
 
-interface Contents {
-  _id: string;
+interface Data {
+  // [index: string]: string | boolean | object;
+  _id: never;
   id: string;
   content: string;
   category: string;
   completed: boolean;
   date: string;
+  email: string;
 }
-
-// const fetchDate = async (req: { date: string; role: string }) => {
-//   const response = await fetch('/api/database/user', {
-//     method: 'POST',
-//     body: JSON.stringify(req),
-//     headers: { 'Content-Type': 'application/json' },
-//   });
-
-//   const data = await response.json();
-
-//   if (!response.ok) {
-//     throw new Error(data.message || 'Something went wrong!');
-//   }
-// };
 
 const Task = () => {
   const [showModal, setShowModal] = useState<boolean>(false);
-  const [newData, setNewData] = useState<Contents[]>([]);
+  const [newData, setNewData] = useState([]);
 
   const { date, year, month } = useAppSelector((state) => state.date);
 
   const { data, isError } = useFetch();
 
   useEffect(() => {
-    // fetchDate();
     // transform data to array
     if (data) {
       for (const key in data) {
         // console.log(Array.isArray(data[key])); // true
         setNewData(data[key]);
       }
+      // console.log(newData);
     }
   }, [data]);
+
+  // const changeCompleted = (id: string) => {
+  //   const currentUser: User = session?.user?.email;
+  //   update({ user: currentUser });
+  // };
+
+  // const deleteTask = (id: string) => {};
 
   const show = () => {
     setShowModal(true);
@@ -67,8 +62,13 @@ const Task = () => {
           <CreateButton onShow={show} />
         </div>
         <ul>
-          {newData.map((item) => (
-            <TaskItem key={item._id} contents={item} />
+          {newData.map((item: Data) => (
+            <TaskItem
+              key={item._id}
+              contents={item}
+              // onChangeCompleted={changeCompleted}
+              // onDeleteTask={deleteTask}
+            />
           ))}
           {isError && <p>일정을 가져오는데 실패했어요 😂</p>}
         </ul>

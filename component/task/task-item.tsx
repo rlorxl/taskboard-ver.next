@@ -3,33 +3,65 @@ import styled, { css } from 'styled-components';
 import { AiOutlineDelete } from 'react-icons/ai';
 
 interface Contents {
-  _id: string;
+  // [index: string]: string | boolean | object;
+  _id: never;
   id: string;
   content: string;
   category: string;
   completed: boolean;
   date: string;
+  email: string;
 }
 
 interface TaskItemProps {
+  key: object;
   contents: Contents;
+  // onChangeCompleted: (id: string) => void;
+  // onDeleteTask: (id: string) => void;
 }
 
+type User = string | null | undefined;
+
+interface RequestBody {
+  _id: never;
+  completed?: boolean;
+}
+
+const updateTask = async (reqBody: RequestBody) => {
+  await fetch('/api/database/tas', {
+    method: 'PUT',
+    body: JSON.stringify(reqBody),
+    headers: { 'Content-Type': 'application/json' },
+  })
+    .then((response) => response.json())
+    .catch((error) => console.log(error.message || 'Something went wrong!'));
+};
+
+const deleteTask = async (reqBody: RequestBody) => {
+  await fetch('/api/database/task', {
+    method: 'DELETE',
+    body: JSON.stringify(reqBody),
+    headers: { 'Content-Type': 'application/json' },
+  })
+    .then((response) => response.json())
+    .catch((error) => console.log(error.message || 'Something went wrong!'));
+};
+
 const TaskItem: React.FC<TaskItemProps> = (props) => {
-  const { id, content, category, completed } = props.contents;
+  const { _id, content, category, completed } = props.contents;
 
   const changeCompletedHandler = () => {
-    // api
+    updateTask({ _id, completed });
   };
 
   const deleteTaskHandler = () => {
-    // api
+    deleteTask({ _id });
   };
 
   return (
     <ItemWrap>
-      <input type='checkbox' id={id} />
-      <label htmlFor={id} onClick={changeCompletedHandler}>
+      <input type='checkbox' id={_id} />
+      <label htmlFor={_id} onClick={changeCompletedHandler}>
         <div>
           <CheckIcon checked={completed} />
         </div>
@@ -88,7 +120,7 @@ const CheckIcon = styled.span<{ checked: boolean }>`
   margin-right: 8px;
 
   ${(props) =>
-    props.checked &&
+    props.checked === true &&
     css`
       background: ${({ theme }) => theme.color.carrot};
       border-color: ${({ theme }) => theme.color.carrot};

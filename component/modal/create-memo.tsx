@@ -1,13 +1,8 @@
 import React from 'react';
 import { BiPlus } from 'react-icons/bi';
 import styled from 'styled-components';
-import { useAppSelector } from '../../store/configStore.hooks';
 import { Button } from '../../styles/theme';
 import MemoItem from './memo-item';
-
-const createRandomId = () => {
-  return Math.random().toString(36).substring(2, 12);
-};
 
 interface Memo {
   id: string;
@@ -18,6 +13,10 @@ interface CreateMemoProps {
   memos: Memo[];
   setMemos: (prevMemos: any) => void;
 }
+
+const createRandomId = () => {
+  return Math.random().toString(36).substring(2, 12);
+};
 
 const CreateMemo: React.FC<CreateMemoProps> = (props) => {
   const { memos, setMemos } = props;
@@ -33,8 +32,8 @@ const CreateMemo: React.FC<CreateMemoProps> = (props) => {
   };
 
   const addMemoContent = (id: string, text: string) => {
-    const newItems = memos.map((item) =>
-      item.id === id ? { ...item, content: text } : item
+    const newItems = memos.map((item, i) =>
+      `memo_${i}` === id ? { ...item, content: text } : item
     );
     setMemos(newItems);
   };
@@ -53,7 +52,7 @@ const CreateMemo: React.FC<CreateMemoProps> = (props) => {
         </Button>
       </TitleArea>
       <ul>
-        {props.memos.map((item) => (
+        {memos.map((item) => (
           <MemoItem
             key={item.id}
             id={item.id}

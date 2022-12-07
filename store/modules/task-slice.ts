@@ -57,7 +57,6 @@ const taskSlice = createSlice({
     },
     clear: (state) => {
       state.selectedCategory = '';
-      // state.memos = {};
     },
   },
 });
