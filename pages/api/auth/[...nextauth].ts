@@ -1,6 +1,6 @@
 import NextAuth from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
-import { verifyPassword } from '../../../lib/check-password.ts';
+import { verifyPassword } from '../../../lib/check-password';
 import { connectToDatabase } from '../../../lib/db';
 
 interface Credentials {
@@ -19,6 +19,7 @@ export default NextAuth({
     CredentialsProvider({
       name: 'Credentials',
 
+      // @ts-ignore
       async authorize(credentials: Credentials, req) {
         const client = await connectToDatabase();
 
