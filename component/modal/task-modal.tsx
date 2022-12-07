@@ -37,7 +37,7 @@ const createRandomId = () => {
 };
 
 const taskUpload = async (reqBody: RequestBody) => {
-  const response = await fetch('/api/database/user', {
+  const response = await fetch('/api/database/task', {
     method: 'POST',
     body: JSON.stringify(reqBody),
     headers: { 'Content-Type': 'application/json' },
@@ -48,6 +48,8 @@ const taskUpload = async (reqBody: RequestBody) => {
   if (!response.ok) {
     throw new Error(data.message || 'Something went wrong!');
   }
+
+  return data;
 };
 
 const TaskModal: React.FC<ModalProps> = (props) => {
@@ -98,11 +100,15 @@ const TaskModal: React.FC<ModalProps> = (props) => {
 
     if (typeof session?.user?.email === 'string') {
       const currentUser: string = session?.user?.email;
-      await taskUpload({ user: currentUser, memo: filteredMemos, date });
+      const data = await taskUpload({
+        user: currentUser,
+        memo: filteredMemos,
+        date,
+      });
+      console.log(data);
     }
 
-    // http request (POST)
-    // closeModal();
+    closeModal();
   };
 
   const ModalChildren = (
