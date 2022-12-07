@@ -53,21 +53,18 @@ const taskUpload = async (reqBody: RequestBody) => {
 };
 
 const TaskModal: React.FC<ModalProps> = (props) => {
+  const [memos, setMemos] = useState<MemoState[]>([
+    { id: createRandomId(), content: '' },
+  ]);
+  const [error, setError] = useState<boolean>(false);
+  const [errorMessage, setErrorMessage] = useState<string>('');
+
   const { data: session } = useSession();
 
   const dispatch = useAppDispatch();
 
   const { selectedCategory } = useAppSelector((state) => state.task);
   const { date } = useAppSelector((state) => state.date);
-
-  const [memos, setMemos] = useState<MemoState[]>([
-    {
-      id: createRandomId(),
-      content: '',
-    },
-  ]);
-  const [error, setError] = useState<boolean>(false);
-  const [errorMessage, setErrorMessage] = useState<string>('');
 
   const closeModal = () => {
     dispatch(taskActions.clear());
@@ -95,8 +92,6 @@ const TaskModal: React.FC<ModalProps> = (props) => {
         completed: false,
         date: date,
       }));
-
-    // console.log(filteredMemos);
 
     if (typeof session?.user?.email === 'string') {
       const currentUser: string = session?.user?.email;
