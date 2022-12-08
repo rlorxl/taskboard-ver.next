@@ -32,8 +32,8 @@ const CreateMemo: React.FC<CreateMemoProps> = (props) => {
   };
 
   const addMemoContent = (id: string, text: string) => {
-    const newItems = memos.map((item, i) =>
-      `memo_${i}` === id ? { ...item, content: text } : item
+    const newItems = memos.map((item) =>
+      item.id === id ? { ...item, content: text } : item
     );
     setMemos(newItems);
   };

@@ -1,5 +1,5 @@
 import { NextApiResponse } from 'next';
-import { connectToDatabase } from '../../../lib/db';
+import { connectToDatabase } from '../../../lib/db-util';
 
 interface Request {
   query: { id: string; date: string };

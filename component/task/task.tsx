@@ -5,43 +5,66 @@ import CreateButton from '../ui/create-button';
 import TaskItem from './task-item';
 import { useAppSelector } from '../../store/configStore.hooks';
 import useFetch from '../../hooks/useFetch';
+import { useSWRConfig } from 'swr';
+import { useSession } from 'next-auth/react';
+// import { deleteTask, updateTask } from '../../lib/db-util';
 
-interface Data {
-  // [index: string]: string | boolean | object;
-  _id: never;
-  id: string;
-  content: string;
-  category: string;
-  completed: boolean;
-  date: string;
-  email: string;
+interface RequestBody {
+  user?: string;
+  memo?: {
+    id: string;
+    content: string;
+    category: string;
+    completed: boolean;
+    date: string;
+  }[];
+  date?: string;
+  _id?: never;
+  completed?: boolean;
 }
+
+const updateTask = async (reqBody: RequestBody) => {
+  await fetch('/api/database/task', {
+    method: 'PUT',
+    body: JSON.stringify(reqBody),
+    headers: { 'Content-Type': 'application/json' },
+  })
+    .then((response) => response.json())
+    .catch((error) => console.log(error.message || 'Something went wrong!'));
+};
+
+const deleteTask = async (reqBody: RequestBody) => {
+  await fetch('/api/database/task', {
+    method: 'DELETE',
+    body: JSON.stringify(reqBody),
+    headers: { 'Content-Type': 'application/json' },
+  })
+    .then((response) => response.json())
+    .catch((error) => console.log(error.message || 'Something went wrong!'));
+};
 
 const Task = () => {
   const [showModal, setShowModal] = useState<boolean>(false);
-  const [newData, setNewData] = useState([]);
 
   const { date, year, month } = useAppSelector((state) => state.date);
 
+  const { data: session } = useSession();
+
+  const id = session?.user?.email;
+
   const { data, isError } = useFetch();
 
-  useEffect(() => {
-    // transform data to array
-    if (data) {
-      for (const key in data) {
-        // console.log(Array.isArray(data[key])); // true
-        setNewData(data[key]);
-      }
-      // console.log(newData);
-    }
-  }, [data]);
+  const { mutate } = useSWRConfig();
 
-  // const changeCompleted = (id: string) => {
-  //   const currentUser: User = session?.user?.email;
-  //   update({ user: currentUser });
-  // };
+  const changeCompletedHandler = async (_id: never, completed: boolean) => {
+    await updateTask({ _id, completed });
+    mutate(`/api/database/${id}/${date}`);
+  };
 
-  // const deleteTask = (id: string) => {};
+  const deleteTaskHandler = async (_id: never) => {
+    await deleteTask({ _id });
+    mutate(`/api/database/${id}/${date}`);
+  };
 
   const show = () => {
     setShowModal(true);
@@ -62,14 +85,15 @@ const Task = () => {
           <CreateButton onShow={show} />
         </div>
         <ul>
-          {newData.map((item: Data) => (
+          {data?.data.map((item: any) => (
             <TaskItem
               key={item._id}
               contents={item}
-              // onChangeCompleted={changeCompleted}
-              // onDeleteTask={deleteTask}
+              onChangeCompleted={changeCompletedHandler}
+              onDeleteTask={deleteTaskHandler}
             />
           ))}
+
           {isError && <p>일정을 가져오는데 실패했어요 😂</p>}
         </ul>
       </TaskArea>

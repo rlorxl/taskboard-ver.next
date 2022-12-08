@@ -1,7 +1,7 @@
 import NextAuth from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import { verifyPassword } from '../../../lib/check-password';
-import { connectToDatabase } from '../../../lib/db';
+import { connectToDatabase } from '../../../lib/db-util';
 
 interface Credentials {
   email: string;

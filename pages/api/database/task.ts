@@ -1,6 +1,6 @@
 import { ObjectId } from 'mongodb';
 import { NextApiResponse } from 'next';
-import { connectToDatabase } from '../../../lib/db';
+import { connectToDatabase } from '../../../lib/db-util';
 
 interface RequestBody {
   user: string;

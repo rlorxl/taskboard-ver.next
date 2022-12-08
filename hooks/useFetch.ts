@@ -1,9 +1,17 @@
 import { useSession } from 'next-auth/react';
-import useSWR, { Key, Fetcher } from 'swr';
+import useSWR from 'swr';
 import { useAppSelector } from '../store/configStore.hooks';
 
 interface Data {
-  data: object;
+  data: {
+    _id: never;
+    id: string;
+    content: string;
+    category: string;
+    completed: boolean;
+    date: string;
+    email: string;
+  }[];
 }
 
 const useFetch = () => {
@@ -12,9 +20,11 @@ const useFetch = () => {
 
   const id = session?.user?.email;
 
-  const { data, error } = useSWR<Data | Error>(
+  const { data, error } = useSWR<Data>(
     `/api/database/${id}/${date}`,
     (args) => fetch(args).then((res) => res.json())
+    // { refreshInterval: 1000 }
+    // { revalidateOnFocus: true }
   );
 
   return {

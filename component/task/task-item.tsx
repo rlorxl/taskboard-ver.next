@@ -3,7 +3,6 @@ import styled, { css } from 'styled-components';
 import { AiOutlineDelete } from 'react-icons/ai';
 
 interface Contents {
-  // [index: string]: string | boolean | object;
   _id: never;
   id: string;
   content: string;
@@ -14,48 +13,22 @@ interface Contents {
 }
 
 interface TaskItemProps {
-  key: object;
   contents: Contents;
-  // onChangeCompleted: (id: string) => void;
-  // onDeleteTask: (id: string) => void;
+  onChangeCompleted: (id: never, completed: boolean) => void;
+  onDeleteTask: (id: never) => void;
 }
 
 type User = string | null | undefined;
-
-interface RequestBody {
-  _id: never;
-  completed?: boolean;
-}
-
-const updateTask = async (reqBody: RequestBody) => {
-  await fetch('/api/database/tas', {
-    method: 'PUT',
-    body: JSON.stringify(reqBody),
-    headers: { 'Content-Type': 'application/json' },
-  })
-    .then((response) => response.json())
-    .catch((error) => console.log(error.message || 'Something went wrong!'));
-};
-
-const deleteTask = async (reqBody: RequestBody) => {
-  await fetch('/api/database/task', {
-    method: 'DELETE',
-    body: JSON.stringify(reqBody),
-    headers: { 'Content-Type': 'application/json' },
-  })
-    .then((response) => response.json())
-    .catch((error) => console.log(error.message || 'Something went wrong!'));
-};
 
 const TaskItem: React.FC<TaskItemProps> = (props) => {
   const { _id, content, category, completed } = props.contents;
 
   const changeCompletedHandler = () => {
-    updateTask({ _id, completed });
+    props.onChangeCompleted(_id, completed);
   };
 
   const deleteTaskHandler = () => {
-    deleteTask({ _id });
+    props.onDeleteTask(_id);
   };
 
   return (

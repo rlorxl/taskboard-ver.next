@@ -10,6 +10,8 @@ import { useAppDispatch, useAppSelector } from '../../store/configStore.hooks';
 import { taskActions } from '../../store/modules/task-slice';
 import { BiErrorCircle } from 'react-icons/bi';
 import { useSession } from 'next-auth/react';
+import { useSWRConfig } from 'swr';
+// import { taskUpload } from '../../lib/db-util';
 
 interface ModalProps {
   onClose: () => void;
@@ -21,15 +23,17 @@ interface MemoState {
 }
 
 interface RequestBody {
-  user: string;
-  memo: {
+  user?: string;
+  memo?: {
     id: string;
     content: string;
     category: string;
     completed: boolean;
     date: string;
   }[];
-  date: string;
+  date?: string;
+  _id?: never;
+  completed?: boolean;
 }
 
 const createRandomId = () => {
@@ -60,6 +64,8 @@ const TaskModal: React.FC<ModalProps> = (props) => {
   const [errorMessage, setErrorMessage] = useState<string>('');
 
   const { data: session } = useSession();
+
+  const { mutate } = useSWRConfig();
 
   const dispatch = useAppDispatch();
 
@@ -93,14 +99,18 @@ const TaskModal: React.FC<ModalProps> = (props) => {
         date: date,
       }));
 
+    // console.log(filteredMemos);
+
     if (typeof session?.user?.email === 'string') {
       const currentUser: string = session?.user?.email;
-      const data = await taskUpload({
+
+      await taskUpload({
         user: currentUser,
         memo: filteredMemos,
         date,
       });
-      console.log(data);
+
+      mutate(`/api/database/${currentUser}/${date}`);
     }
 
     closeModal();
