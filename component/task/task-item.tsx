@@ -18,8 +18,6 @@ interface TaskItemProps {
   onDeleteTask: (id: never) => void;
 }
 
-type User = string | null | undefined;
-
 const TaskItem: React.FC<TaskItemProps> = (props) => {
   const { _id, content, category, completed } = props.contents;
 

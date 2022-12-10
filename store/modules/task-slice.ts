@@ -1,9 +1,15 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
+interface Data {
+  date: string;
+  count: number;
+  completed: number;
+}
+
 interface TaskState {
   selectedCategory: string;
   categories: string[];
-  tasks: string[][];
+  tasks: Data[];
   goal: string;
   notification: { status: string; message: String };
 }
@@ -37,24 +43,18 @@ const taskSlice = createSlice({
       );
       state.categories = newCategories;
     },
-    setTasks: (state, action) => {
-      const newTasks = [];
-      if (!action.payload) state.tasks = [];
-
-      for (const key in action.payload) {
-        newTasks.push([key, action.payload[key]]);
-      }
-      state.tasks = newTasks;
+    setTasks: (state, action: PayloadAction<Data[]>) => {
+      state.tasks = action.payload;
     },
-    setGoal: (state, action) => {
-      state.goal = action.payload.text;
-    },
-    setNotification: (state, action) => {
-      state.notification = {
-        status: action.payload.status,
-        message: action.payload.message,
-      };
-    },
+    // setGoal: (state, action) => {
+    //   state.goal = action.payload.text;
+    // },
+    // setNotification: (state, action) => {
+    //   state.notification = {
+    //     status: action.payload.status,
+    //     message: action.payload.message,
+    //   };
+    // },
     clear: (state) => {
       state.selectedCategory = '';
     },

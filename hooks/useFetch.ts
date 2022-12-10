@@ -14,17 +14,16 @@ interface Data {
   }[];
 }
 
-const useFetch = () => {
+const useFetch = (date?: string) => {
   const { data: session } = useSession();
-  const { date } = useAppSelector((state) => state.date);
-
   const id = session?.user?.email;
 
+  const api = date ? `/api/database/${id}/${date}` : `/api/database/${id}`;
+
   const { data, error } = useSWR<Data>(
-    `/api/database/${id}/${date}`,
-    (args) => fetch(args).then((res) => res.json())
-    // { refreshInterval: 1000 }
-    // { revalidateOnFocus: true }
+    api,
+    (args) => fetch(args).then((res) => res.json()),
+    { revalidateOnFocus: false }
   );
 
   return {

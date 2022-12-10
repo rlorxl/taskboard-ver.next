@@ -4,6 +4,14 @@ import { useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../store/configStore.hooks';
 import { dateActions } from '../../store/modules/date-slice';
 import Day from './day';
+import useFetch from '../../hooks/useFetch';
+import { taskActions } from '../../store/modules/task-slice';
+
+interface Data {
+  date: string;
+  count: number;
+  completed: number;
+}
 
 const monthName: string[] = [
   'January',
@@ -19,6 +27,7 @@ const monthName: string[] = [
   'November',
   'December',
 ];
+
 const week: string[] = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
 
 const Calendar = () => {
@@ -27,6 +36,32 @@ const Calendar = () => {
 
   const dispatch = useAppDispatch();
   const { year, month, day } = useAppSelector((state) => state.date);
+
+  const { data: allData } = useFetch();
+
+  useEffect(() => {
+    if (!allData?.data?.length || allData?.data?.length === 0) {
+      console.log('no data');
+      dispatch(taskActions.setTasks([]));
+      return;
+    }
+
+    const dates = allData.data.map((data) => data.date);
+    const removeDuplicate = dates.filter(
+      (item, index) => dates.indexOf(item) === index
+    );
+
+    const result: Data[] = removeDuplicate.map((date) => {
+      const dateData = allData.data.filter((data) => data.date === date).length;
+      const completeDate = allData.data.filter(
+        (data) => data.date === date && data.completed
+      ).length;
+
+      return { date: date, count: dateData, completed: completeDate };
+    });
+
+    dispatch(taskActions.setTasks(result));
+  }, [allData]);
 
   const increaseMonthHandler = () => {
     dispatch(dateActions.increaseMonth());

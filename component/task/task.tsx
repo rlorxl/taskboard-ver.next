@@ -52,18 +52,20 @@ const Task = () => {
 
   const id = session?.user?.email;
 
-  const { data, isError } = useFetch();
+  const { data, isLoading, isError } = useFetch(date);
 
   const { mutate } = useSWRConfig();
 
   const changeCompletedHandler = async (_id: never, completed: boolean) => {
     await updateTask({ _id, completed });
     mutate(`/api/database/${id}/${date}`);
+    mutate(`/api/database/${id}`);
   };
 
   const deleteTaskHandler = async (_id: never) => {
     await deleteTask({ _id });
     mutate(`/api/database/${id}/${date}`);
+    mutate(`/api/database/${id}`);
   };
 
   const show = () => {
@@ -73,6 +75,31 @@ const Task = () => {
   const close = () => {
     setShowModal(false);
   };
+
+  let content;
+
+  if (data) {
+    content = data?.data.map((item: any) => (
+      <TaskItem
+        key={item._id}
+        contents={item}
+        onChangeCompleted={changeCompletedHandler}
+        onDeleteTask={deleteTaskHandler}
+      />
+    ));
+  }
+
+  if (data && data.data.length === 0) {
+    content = <p>일정을 추가하세요.</p>;
+  }
+
+  if (isLoading) {
+    content = <p>loading...</p>;
+  }
+
+  if (isError) {
+    content = <p>일정을 가져오는데 실패했어요 😂</p>;
+  }
 
   return (
     <>
@@ -84,18 +111,7 @@ const Task = () => {
           </Date>
           <CreateButton onShow={show} />
         </div>
-        <ul>
-          {data?.data.map((item: any) => (
-            <TaskItem
-              key={item._id}
-              contents={item}
-              onChangeCompleted={changeCompletedHandler}
-              onDeleteTask={deleteTaskHandler}
-            />
-          ))}
-
-          {isError && <p>일정을 가져오는데 실패했어요 😂</p>}
-        </ul>
+        <ul>{content}</ul>
       </TaskArea>
     </>
   );

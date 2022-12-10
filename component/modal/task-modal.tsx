@@ -99,8 +99,6 @@ const TaskModal: React.FC<ModalProps> = (props) => {
         date: date,
       }));
 
-    // console.log(filteredMemos);
-
     if (typeof session?.user?.email === 'string') {
       const currentUser: string = session?.user?.email;
 
@@ -111,6 +109,7 @@ const TaskModal: React.FC<ModalProps> = (props) => {
       });
 
       mutate(`/api/database/${currentUser}/${date}`);
+      mutate(`/api/database/${currentUser}`);
     }
 
     closeModal();
