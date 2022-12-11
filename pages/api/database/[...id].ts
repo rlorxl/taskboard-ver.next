@@ -1,28 +1,38 @@
 import { NextApiResponse } from 'next';
-import { connectToDatabase } from '../../../lib/db-util';
+import {
+  connectToDatabase,
+  getAllDocuments,
+  getDateDocuments,
+} from '../../../lib/db-util';
 
 interface Request {
-  query: { id: string; date: string };
+  query: { id: string; date?: string };
 }
 
 const handler = async (req: Request, res: NextApiResponse) => {
+  // console.log(req?.query);
+  const client = await connectToDatabase();
+
   const userEmail = req?.query?.id[0];
   const date = req?.query?.id[1];
 
-  const client = await connectToDatabase();
-  const db = client.db();
+  let documents;
 
-  try {
-    const documents = await db
-      .collection('tasks')
-      .find({
-        email: userEmail,
-        date: date,
-      })
-      .toArray();
-    res.status(200).json({ data: documents });
-  } catch (error: any) {
-    console.log(error.message);
+  if (date) {
+    try {
+      documents = await getDateDocuments({ client, user: userEmail, date });
+      res.status(200).json({ data: documents });
+    } catch (error: any) {
+      console.log(error.message);
+    }
+  } else {
+    // console.log('all');
+    try {
+      documents = await getAllDocuments({ client, user: userEmail });
+      res.status(200).json({ data: documents });
+    } catch (error: any) {
+      console.log(error.message);
+    }
   }
 };
 
