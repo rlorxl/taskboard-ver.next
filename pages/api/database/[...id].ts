@@ -1,16 +1,11 @@
-import { NextApiResponse } from 'next';
-import {
-  connectToDatabase,
-  getAllDocuments,
-  getDateDocuments,
-} from '../../../lib/db-util';
+import { NextApiResponse } from "next";
+import { connectToDatabase, getAllDocuments, getDateDocuments } from "../../../lib/db-util";
 
 interface Request {
   query: { id: string; date?: string };
 }
 
 const handler = async (req: Request, res: NextApiResponse) => {
-  // console.log(req?.query);
   const client = await connectToDatabase();
 
   const userEmail = req?.query?.id[0];
@@ -26,7 +21,6 @@ const handler = async (req: Request, res: NextApiResponse) => {
       console.log(error.message);
     }
   } else {
-    // console.log('all');
     try {
       documents = await getAllDocuments({ client, user: userEmail });
       res.status(200).json({ data: documents });
