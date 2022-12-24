@@ -3,6 +3,7 @@
 - next.js
 - next-auth
 - redux-toolkit
+- swr
 - typescript
 - mongodb
 
